@@ -18,7 +18,7 @@ func getEvents(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, events)
 }
 
-func GetEventById(ctx *gin.Context) {
+func getEventById(ctx *gin.Context) {
 	eventId, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 
 	if err != nil {
