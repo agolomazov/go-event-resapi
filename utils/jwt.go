@@ -11,7 +11,6 @@ import (
 const secretKey = "secretKey"
 
 func GenerateToken(email string, userId int64) (string, error) {
-	fmt.Println("auth user", userId)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email":  email,
 		"userId": userId,
@@ -50,7 +49,6 @@ func VerifyToken(token string) (int64, error) {
 	}
 
 	// email := claims["email"].(string)
-	fmt.Println(claims)
 	userId := int64(claims["userId"].(float64))
 	return userId, nil
 }
