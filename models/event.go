@@ -141,3 +141,37 @@ func (e Event) Register(userId int64) error {
 
 	return err
 }
+
+func (e Event) Unregister(userId int64) error {
+	query := "DELETE FROM registrations WHERE event_id = ? AND user_id = ?"
+	stmt, err := db.Db.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(e.ID, userId)
+
+	return err
+}
+
+func (e *Event) ExistRegistration(userId int64) bool {
+	query := "SELECT id, event_id, user_id FROM registrations WHERE event_id = ? AND user_id = ?"
+	row := db.Db.QueryRow(query, e.ID, userId)
+
+	var reg Registration
+
+	err := row.Scan(&reg.ID, &reg.EventId, &reg.ID)
+
+	if err != nil {
+		return false
+	}
+
+	if reg.ID > 0 {
+		return true
+	}
+
+	return false
+}
