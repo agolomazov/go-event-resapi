@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -21,7 +22,8 @@ func GenerateToken(email string, userId int64) (string, error) {
 }
 
 func VerifyToken(token string) (int64, error) {
-	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+	splitedToken := getTokenValue(token)
+	parsedToken, err := jwt.Parse(splitedToken, func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 
 		if !ok {
@@ -51,4 +53,9 @@ func VerifyToken(token string) (int64, error) {
 	// email := claims["email"].(string)
 	userId := int64(claims["userId"].(float64))
 	return userId, nil
+}
+
+func getTokenValue(token string) string {
+	splited := strings.Split(token, " ")
+	return splited[1]
 }
