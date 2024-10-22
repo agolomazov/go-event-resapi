@@ -1,0 +1,644 @@
+{
+	"info": {
+		"_postman_id": "f7e56506-b288-4942-a369-ac349f37f4f3",
+		"name": "Events Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2614419",
+		"_collection_link": "https://restless-trinity-325919.postman.co/workspace/Strapi-WorkSpace~c2245127-3b0e-48a4-a364-2597ea020f3e/collection/2614419-f7e56506-b288-4942-a369-ac349f37f4f3?action=share&source=collection_link&creator=2614419"
+	},
+	"item": [
+		{
+			"name": "Auth User",
+			"item": [
+				{
+					"name": "Регистрация пользователя",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"var schema = {\r",
+									"  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"message\": {\r",
+									"      \"type\": \"string\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"message\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test('Request was valid schema', function () {\r",
+									"    pm.response.to.have.jsonSchema(schema)\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest('Авторизация пользователя  (Fail)')"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"{{$randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/signup",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Авторизация пользователя  (Fail)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is not 200\", function () {\r",
+									"    pm.response.to.not.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 900ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(900);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Success auth returned jwt token\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.not.have.property(\"token\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validate schema response\", function () {\r",
+									"    const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\r",
+									"    \"title\": \"Generated schema for Root\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"message\": {\r",
+									"        \"type\": \"string\"\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"message\"\r",
+									"    ]}\r",
+									"\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest('Авторизация пользователя  (Success)')"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@example\",\r\n    \"password\": \"qwerty\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/login",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Авторизация пользователя  (Success)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 900ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(900);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Success auth returned jwt token\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"token\")\r",
+									"\r",
+									"    pm.environment.set(\"AUTH_TOKEN\", jsonData.token);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validate schema response\", function () {\r",
+									"    const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\r",
+									"    \"title\": \"Generated schema for Root\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"message\": {\r",
+									"        \"type\": \"string\"\r",
+									"        },\r",
+									"        \"token\": {\r",
+									"        \"type\": \"string\"\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"message\",\r",
+									"        \"token\"\r",
+									"    ]\r",
+									"    }\r",
+									"\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest('Создание события')"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"cesear@bk.ru\",\r\n    \"password\": \"qwerty\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/login",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Registration by event",
+			"item": [
+				{
+					"name": "Создание события",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const result = pm.response.json()\r",
+									"\r",
+									"if (pm.response.code === 201) {\r",
+									"    pm.environment.set(\"LAST_EVENT_CREATED_ID\", result.event.id);\r",
+									"    console.log('LAST_EVENT_CREATED_ID', result.event.id)\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest('Список событий')"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AUTH_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Тестовое событие\",\r\n    \"description\": \"Самое простое тестовое событие которое можно себе представить\",\r\n    \"location\": \"Los Spb.\",\r\n    \"dateTime\": \"2025-01-01T15:30:00.000Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/events",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Список событий",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(50);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest('Получить событие по ID')"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DOMAIN}}/events",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновление события по ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(50);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest('Регистрация пользователя на событие')"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AUTH_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Тестовое событие обновлено!\",\r\n    \"description\": \"Обновленное тестовое событие\",\r\n    \"location\": \"Msc City\",\r\n    \"dateTime\": \"2025-01-01T15:30:00.000Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/events/:id",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"events",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{LAST_EVENT_CREATED_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Регистрация пользователя на событие",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(50);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest('Снятие пользователя с регистрации')"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AUTH_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{DOMAIN}}/events/:id/register",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"events",
+								":id",
+								"register"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{LAST_EVENT_CREATED_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Снятие пользователя с регистрации",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(50);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest('Удаление события по ID')"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AUTH_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{DOMAIN}}/events/:id/register",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"events",
+								":id",
+								"register"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{LAST_EVENT_CREATED_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получить событие по ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(50);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest('Обновление события по ID')"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DOMAIN}}/events/:id",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"events",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{LAST_EVENT_CREATED_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление события по ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 50ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(50);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(null)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AUTH_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{DOMAIN}}/events/:id",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"events",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{LAST_EVENT_CREATED_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Эндпоинты для управления событиями в сервисе"
+		}
+	]
+}

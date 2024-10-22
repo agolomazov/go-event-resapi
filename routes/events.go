@@ -125,5 +125,5 @@ func deleteEvent(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Event was delete"})
+	ctx.JSON(http.StatusNoContent, gin.H{"message": "Event was delete"})
 }
