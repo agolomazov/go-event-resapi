@@ -1,0 +1,379 @@
+openapi: 3.0.3
+info:
+  title: Сервис событий - OpenAPI 3.0.3
+  description: |-
+    Данный сервис представляет собой простую систему регистрации пользователей на мероприятия
+  termsOfService: http://example.com
+  contact:
+    email: cesear@bk.ru
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Дополнительная информация по БП
+  url: http://swagger.io
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: auth
+    description: Регистрация / авторизация пользователей в системе
+  - name: events
+    description: События
+  - name: registration
+    description: Регистрация пользователе на событие
+paths:
+  /signup:
+    post:
+      tags:
+        - auth
+      summary: Регистрация пользователя в системе
+      description: Регистрация новых пользователей в системе "Сервис событий"
+      operationId: signUp
+      requestBody:
+        description: Сохранение данных о пользователе в системе
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeAuth'
+      responses:
+        '201':
+          description: Пользователь зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationResponse'
+        '400':
+          description: Ошибка при регистрации пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationResponse'
+  /login:
+    post:
+      tags:
+        - auth
+      summary: Авторизация пользователя в системе
+      description: Авторизация пользователя в системе и предоставление ему прав автора
+      operationId: login
+      requestBody:
+        description: Данные для авторизации пользователя в системе
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeAuth'
+      responses:
+        '200':
+          description: Успешная авторизация пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccess'
+        '403':
+          description: Ошибка авторизации пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationResponse'
+  /events:
+    get:
+      tags:
+        - events
+      summary: Получение ленты событий
+      description: Получение ленты ближайших событий системы
+      operationId: events
+      responses:
+        '200':
+          description: Успешное получение списка событий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+    post:
+      tags:
+        - events
+      summary: Создание нового события
+      description: Создание нового мероприятия в системе текущим авторизированным пользователем
+      operationId: createEvent
+      requestBody:
+        description: Данные для создания события
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventToCRUD'
+      responses:
+        '200':
+          description: Успешное создание события
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Ошибка при создании события
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+  /events/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Идентификатор события
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - events
+      summary: Получение полной информации о событии по идентификатору
+      description: Получение подробной информации о событии
+      operationId: eventById
+      responses:
+        '200':
+          description: Успешное получение подробной информации о событии
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: События с подобный идентификатором нет в системе
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+    put:
+      tags:
+        - events
+      summary: Обновление информации о событии
+      description: Обновление события
+      operationId: updateEventById
+      requestBody:
+        description: Данные для обновления события
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventToCRUD'
+      responses:
+        '200':
+          description: Успешное обновление события
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Ошибка запроса для обновления запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+        '403':
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+        '404':
+          description: Событие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+    delete:
+      tags:
+        - events
+      summary: Удаление события по ID
+      description: Удаление события
+      operationId: deleteEventById
+      responses:
+        '204':
+          description: Событие удалено
+        '403':
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+        '404':
+          description: Событие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+  /events/{id}/register:
+    parameters:
+      - name: id
+        in: path
+        description: Идентификатор события
+        required: true
+        schema:
+          type: integer
+          format: int64
+    post:
+      tags:
+        - registration
+      description: Регистрация пользователя на событие
+      summary: Регистрация авторизованного пользователя на событие
+      operationId: registerToEvent
+      responses:
+        '201':
+          description: Пользователь успешно зарегистрирован на мероприятие
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+        '400':
+          description: Ошибка параметров запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+        '404':
+          description: Событие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+    delete:
+      tags:
+        - registration
+      description: Снятие пользователя с регистрации на событие
+      summary: Снятие пользователя с регистрации
+      operationId: unregisterToEvent
+      responses:
+        '204':
+          description: Пользователь успешно снят с регистрации на событие
+        '404':
+          description: Событие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+components:
+  schemas:
+    EmployeeAuth:
+      description: Модель данных для авторизации пользователей
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email пользователя для регистрации
+          example: test@test.ru
+        password:
+          type: string
+          description: Пароль пользователя для регистрации
+          example: pa$$word
+      required:
+        - email
+        - password
+    RegistrationResponse:
+      description: Модель данных для регистрации новых пользователей в системе
+      type: object
+      properties:
+        message:
+          type: string
+          description: Описание результата ответа
+      required:
+        - message
+    AuthSuccess:
+      description: Модель успешной авторизации пользователя
+      type: object
+      properties:
+        message:
+          type: string
+          description: Описание статуса авторизации
+        token:
+          type: string
+          description: Авторизационный токен
+      required:
+        - message
+        - token
+    Event:
+      type: object
+      description: Модель подробного описания события
+      properties:
+        id:
+          type: number
+          format: int64
+          description: Идентификатор события
+          example: 1
+        name:
+          type: string
+          description: Название события
+          example: Тестовое событие
+        description:
+          type: string
+          description: Описание события
+          example: Поход на Эльбрус
+        location:
+          type: string
+          description: Место проведения события
+          example: Махачкала, Республика Дагестан
+        dateTime:
+          type: string
+          format: date-time
+          description: Дата проведения мероприятия
+          example: '2025-01-01T15:30:00Z'
+        userId:
+          type: number
+          format: int64
+          description: Идентификатор автора события
+          example: 1
+      required:
+        - id
+        - name
+        - description
+        - location
+        - dateTime
+        - userId
+    EventToCRUD:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название события
+          example: Тестовое событие
+        description:
+          type: string
+          description: Описание события
+          example: Поход на Эльбрус
+        location:
+          type: string
+          description: Место проведения события
+          example: Махачкала, Республика Дагестан
+        dateTime:
+          type: string
+          format: date-time
+          description: Дата проведения мероприятия
+          example: '2025-01-01T15:30:00Z'
+      required:
+        - name
+        - description
+        - location
+        - dateTime
+    SimpleResponse:
+      type: object
+      description: Модель запроса с ошибкой
+      properties:
+        message:
+          type: string
+          description: Описание ошибки
+          example: Entity not found
+      required:
+        - message
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header

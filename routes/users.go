@@ -23,6 +23,7 @@ func signUp(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Could not save user"})
+		return
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"message": "User create successfully"})
